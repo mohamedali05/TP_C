@@ -28,12 +28,12 @@ void afficherTransaction( T_Transaction* listeTransaction){
     }
 }
 
-T_BlockChain ajouterBlock(T_BlockChain bc){
+void ajouterBlock(T_BlockChain bc){
     int id = 0 ; 
     if (bc.Prem_bloc == NULL){
         bc.Prem_bloc = malloc(sizeof(T_Block)) ; 
         bc.Prem_bloc->bloc_id = id  ; 
-        return bc ; 
+         
     }
     id++ ; 
     T_Block* buffer = bc.Prem_bloc  ; 

@@ -30,7 +30,7 @@ typedef struct T_BlockChain {
 } T_BlockChain;
 
 T_Transaction* ajouterTransaction(int idEtu, float montant, char* descr, T_Transaction* listeTransaction);
-T_BlockChain ajouterBlock(T_BlockChain bc) ; 
+void ajouterBlock(T_BlockChain bc) ; 
 float totalTransactionEtudiantBlock(int idEtu, T_Block b)  ; 
 
 void afficherTransaction( T_Transaction* listeTransaction) ; 

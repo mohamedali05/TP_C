@@ -1,18 +1,14 @@
+CC = gcc
+CFLAGS = -lm -Wall -Werror
 
+.PHONY: all clean
 
-# si on tape "make" sans préciser de cible, make va chercher à
-# construire la *première* cible du Makefile.
 default: all
 
-all: main 
+all: main
 
-##########################################
-# compilation des programmes
-
-Main: Main.c
-	gcc -g -Wall -Werror -o rebours   Main.c 
-
-
+main: Main.c TP3.c
+	$(CC) $(CFLAGS) -o $@ $^
 
 clean:
-	rm -f *.o  main
+	rm -f main
