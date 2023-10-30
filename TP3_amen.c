@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "TP3_amen.h"
+//TODO: À la fin du programme, les blocs de mémoire dynamiquement alloués doivent être proprement libérés.
 
 //création et initialisation du bloc
 T_Block* creerBloc(int id, char* date){
@@ -64,11 +65,10 @@ BlockChain ajouterBlock(BlockChain bc, char* date){
 float totalTransactionEtudiantBlock(int idEtu, T_Block b){
     //faut-il pas séparer le montant dépensé et le montant crédité????? 
     float coin=0;
-    T_Transaction* list = b.listeTransactions;
     while(b.listeTransactions != NULL){
         T_Transaction trans = *b.listeTransactions; 
         if(trans.idEtu == idEtu)coin += trans.montant;
-        trans = *trans.suivant;
+        trans = *trans.suivant; // trans->suivant ne marche pas et je sais pas prq
     }
     return coin;
 }
@@ -79,7 +79,7 @@ float soldeEtudiant(int idEtu, BlockChain bc){
     T_Block b = *bc;
     while(bc != NULL){
         res += totalTransactionEtudiantBlock(idEtu, b);
-        b = *b.suivant;
+        b = *b.suivant; // b->suivant ne marche pas et je sais pas prq
     }
     return res;
 }
@@ -99,7 +99,47 @@ void crediter(int idEtu, float montant, char* descr, char* date ,BlockChain bc){
 }
 
 // 6/Paiement d'un repas:
-int payer(int idEtu, float montant, char *descr, BlockChain bc);
+int payer(int idEtu, float montant, char* descr, char* date ,BlockChain bc){ //same thing, faut expliquer prq on a choisi de rajouter el variable date
+    //le montant est-il négatif ou positif?
+    if(montant>0) montant = -montant;
+    float solde = soldeEtudiant(idEtu, bc);
+    if(solde<montant) return 0;
+    else{
+        crediter(idEtu, montant, descr, date, bc);
+        return 1;
+    }
+}
+
+// 7/Historique d'un étudiant:
+void consulter(int idEtu, BlockChain bc){
+    float solde = soldeEtudiant(idEtu, bc);
+    printf("le solde de l'étudiant est: %f \n", solde);
+    printf("l'historique de l'étudiant:");
+    int var=0; //variable qui sera condition de fin de boucle quand c égal à 5
+    T_Block bloc = *bc;
+        while(bc!=NULL && var<5){ //on parcourt les différents blocs à partir du dernier(soit le plus récent)
+            while(bloc.listeTransactions != NULL && var<5){ //on parcourt les différents transactions associées à ce bloc à partir du dernier(soit le plus récent)
+                T_Transaction trans = *bloc.listeTransactions; 
+                if(trans.idEtu == idEtu){
+                    var+=1;
+                    printf("\n\ntransaction numéro %d \n", var);
+                    printf("date: %s \n", bc->dateBlock);
+                    printf("description: %s \n", trans.description);
+                    printf("montant: %f \n", trans.montant);
+                }
+                trans = *trans.suivant; // trans->suivant ne marche pas et je sais pas prq
+            }
+            bc = bc->suivant;
+        }
+    printf("fin d'historique!");
+}
+
+// 8/Transfert de EATCoins entre deux étudiants:
+int transfert(int idSource, int idDestination, float montant, char *descr, char* date,BlockChain bc){
+    crediter(idDestination, montant, descr, date, bc);
+    float montant_neg = -montant;
+    crediter(idSource, montant_neg, descr, date, bc);
+}
 
 // vider buffer
 void viderBuffer() {
