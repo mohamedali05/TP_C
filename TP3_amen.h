@@ -39,17 +39,16 @@ float soldeEtudiant(int idEtu, BlockChain bc);
 void crediter(int idEtu, float montant, char *descr, char* date , BlockChain bc); //TODO: rajouter dans le rapport prq on a rajouté le variable date
 
 // 6.	Paiement d�un repas :
-int payer(int idEtu, float montant, char *descr, BlockChain bc);
+int payer(int idEtu, float montant, char *descr, char* date ,BlockChain bc);//TODO: rajouter dans le rapport prq on a rajouté le variable date
 
 // 7.	Historique d�un �tudiant :
 void consulter(int idEtu, BlockChain bc);
 
 // 8.	Transfert de EATCoins entre deux �tudiants :
-int transfert(int idSource, int idDestination, float montant, char *descr, BlockChain bc);
+int transfert(int idSource, int idDestination, float montant, char *descr, char* date, BlockChain bc);
 
 char* date_suivante(char* date);
 
 // UTILS
 void viderBuffer() ;
-
 
