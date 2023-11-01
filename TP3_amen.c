@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 #include "TP3_amen.h"
 //TODO: À la fin du programme, les blocs de mémoire dynamiquement alloués doivent être proprement libérés.
 
@@ -41,21 +42,116 @@ T_Transaction* ajouterTransaction(int idEtu, float montant, char* descr, T_Trans
     return trans;
 }
 
-char* date_suivante(char* date){ 
-    //TODO
-    //on peut simplifier en comptant 30 jours par mois
+
+T_Block *rechercherBlocParDate(BlockChain bc, char *dateRecherche) {
+    T_Block *currentBlock = bc;
+    while (currentBlock != NULL) {
+        if (strcmp(currentBlock->dateBlock, dateRecherche) == 0) {
+            // La date du bloc correspond à la date de recherche.
+            return currentBlock;
+        }
+        currentBlock = currentBlock->suivant;
+    }
+
+    // Le bloc avec la date recherchée n'a pas été trouvé.
+    return NULL;
 }
 
-// 2/ajout d'un bloc en tete de blockchain 
+int estBissextile(int an) {
+    return (an % 4 == 0 && (an % 100 != 0 || ann % 400 == 0));
+}
+char* date_suivante(char* date){
+
+    char date_courante[] = *date;
+    char sous_chaine_an[5], sous_chaine_mois[3], sous_chaine_jour[3];
+    unsigned int an, mois, jour;
+    unsigned int nouv_an, nouv_mois, nouv_jour;
+
+
+    // Extraire l'an (4 premiers caractères)
+    strncpy(sous_chaine_an, date_courante, 4);
+    sous_chaine_an[4] = '\0';
+
+    // Extraire le mois (2 caractères suivants)
+    strncpy(sous_chaine_mois, date_courante + 4, 2);
+    sous_chaine_mois[2] = '\0';
+
+    // Extraire le jour (2 derniers caractères)
+    strncpy(sous_chaine_jour, date_courante + 6, 2);
+    sous_chaine_jour[2] = '\0';
+
+    // Convertir les sous_chaînes en entiers
+    an = atoi(sous_chaine_an);
+    mois = atoi(sous_chaine_mois);
+    jour = atoi(sous_chaine_jour);
+
+    int jours_par_mois[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    // Vérifier si  l'année est bissextile
+    if (estBissextile(an))
+    {
+        jours_par_mois[1] = 29;
+    }
+
+    // Vérifier si le format de date est cohérent
+    if (mois >= 1 && mois <= 12 && jour >= 1 && jour <= jours_par_mois[mois - 1])
+    {
+        // Incrémenter le jour seulement
+        if (jour < jours_par_mois[mois - 1])
+        {
+            nouv_jour = jour++;
+            nouv_mois = mois;
+            nouv_an = an;
+        }
+        // Passer au mois suivant
+        else if (mois < 12)
+        {
+            nouv_jour = 1;
+            nouv_mois = mois++;
+            nouv_an = an;
+        }
+        // Passer à l'année suivante si le jour courant est le 31 décembre
+        else
+        {
+            nouv_jour = 1;
+            nouv_mois = 1;
+            nouv_an = an++;
+        }
+
+        char sous_chaine_an_suivant[5];
+        char sous_chaine_mois_suivant[3];
+        char sous_chaine_jour_suivant[3];
+
+        // Convertir les entiers en chaînes de caractères
+        sprintf(sous_chaine_an_suivant, "%04d", nouv_an);
+        sprintf(sous_chaine_mois_suivant, "%02d", nouv_mois);
+        sprintf(sous_chaine_jour_suivant, "%02d", nouv_jour);
+
+        // Concaténer les chaînes pour former la date suivante
+        char date_suivante[9];
+        sprintf(date_suivante, "%s%s%s", sous_chaine_an_suivant, sous_chaine_mois_suivant, sous_chaine_jour_suivant);
+
+        printf("Date suivante : %s\n", date_suivante);
+
+        return &date_suivante;
+    }
+    else
+    {
+        printf("Date courante invalide.\n");
+        return NULL;
+    }
+}
+
+
+// 2/ajout d'un bloc en tete de blockchain
 //TODO: rajouter dans le rapport prq on a rajouté le variable date
 BlockChain ajouterBlock(BlockChain bc, char* date){
-    int idBlock_res; 
+    int idBlock_res;
     //blockchain vide--> id= 0
     if(bc == NULL)idBlock_res = 0;
-    //blockchain non vide-->id= bc->idBlock +1 , date 
+    //blockchain non vide-->id= bc->idBlock +1 , date
     else idBlock_res = bc->idBlock + 1;
     T_Block* res = creerBloc(idBlock_res, date);
-
     //on relie le nouveau block créé au reste de la chaine(suivant=NULL si block vide, sinon, suivant= ancienne tete de la chaine)
     res->suivant = bc;
     return res;
@@ -63,10 +159,10 @@ BlockChain ajouterBlock(BlockChain bc, char* date){
 
 // 3/Calcul de la somme des EATCoin crédités et dépenses par un étudiant sur une journée:
 float totalTransactionEtudiantBlock(int idEtu, T_Block b){
-    //faut-il pas séparer le montant dépensé et le montant crédité????? 
+    //faut-il pas séparer le montant dépensé et le montant crédité?????
     float coin=0;
     while(b.listeTransactions != NULL){
-        T_Transaction trans = *b.listeTransactions; 
+        T_Transaction trans = *b.listeTransactions;
         if(trans.idEtu == idEtu)coin += trans.montant;
         trans = *trans.suivant; // trans->suivant ne marche pas et je sais pas prq
     }
@@ -75,7 +171,7 @@ float totalTransactionEtudiantBlock(int idEtu, T_Block b){
 
 // 4/Calcul du solde total d'un étudiant:
 float soldeEtudiant(int idEtu, BlockChain bc){
-    float res = 0;
+    float res = 0.0;
     T_Block b = *bc;
     while(bc != NULL){
         res += totalTransactionEtudiantBlock(idEtu, b);
@@ -119,7 +215,7 @@ void consulter(int idEtu, BlockChain bc){
     T_Block bloc = *bc;
         while(bc!=NULL && var<5){ //on parcourt les différents blocs à partir du dernier(soit le plus récent)
             while(bloc.listeTransactions != NULL && var<5){ //on parcourt les différents transactions associées à ce bloc à partir du dernier(soit le plus récent)
-                T_Transaction trans = *bloc.listeTransactions; 
+                T_Transaction trans = *bloc.listeTransactions;
                 if(trans.idEtu == idEtu){
                     var+=1;
                     printf("\n\ntransaction numéro %d \n", var);

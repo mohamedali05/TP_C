@@ -11,10 +11,10 @@ typedef struct Transaction{
 
 typedef struct Block{
     int idBlock;
-    char* dateBlock; //AAAAMMJJ 
+    char* dateBlock; //AAAAMMJJ
     T_Transaction* listeTransactions;
     struct Block* suivant
-} T_Block;
+} T_Block
 
 typedef T_Block* BlockChain;
 
