@@ -7,7 +7,7 @@ default: all
 
 all: main
 
-main: Main.c TP3.c
+main: Main.c TP3_amen.c
 	$(CC) $(CFLAGS) -o $@ $^
 
 clean:

@@ -26,6 +26,8 @@ T_Block *creerBloc(int id, char* date);
 // 1.	Ajout d'une transaction en t�te d'une liste de transactions :
 T_Transaction *ajouterTransaction(int idEtu, float montant, char *descr, T_Transaction *listeTransaction);
 
+T_Block *rechercherBlocParDate(BlockChain bc, char *dateRecherche) ;
+
 // 2.	Ajout d'un bloc en t�te de la BlockChain :
 BlockChain ajouterBlock(BlockChain bc, char* date); //TODO: rajouter dans le rapport prq on a rajouté le variable date
 

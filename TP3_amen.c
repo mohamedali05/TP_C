@@ -126,8 +126,7 @@ char* date_suivante(char* date){
 
         // Convertir les entiers en chaînes de caractères et concaténer le tout pour obtenir la date suivante
         snprintf(date, 9, "%04d%02d%02d", nouv_an, nouv_mois, nouv_jour);
-        p_result = &date;
-
+        strcpy(p_result, date);
     }
     else
         date[0] = '\0';
