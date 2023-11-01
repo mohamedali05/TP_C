@@ -235,6 +235,7 @@ int transfert(int idSource, int idDestination, float montant, char *descr, char*
     crediter(idDestination, montant, descr, date, bc);
     float montant_neg = -montant;
     crediter(idSource, montant_neg, descr, date, bc);
+    return 1; //if it works else return 0
 }
 
 // vider buffer
