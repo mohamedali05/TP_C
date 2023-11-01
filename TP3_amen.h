@@ -14,7 +14,7 @@ typedef struct Block{
     char* dateBlock; //AAAAMMJJ
     T_Transaction* listeTransactions;
     struct Block* suivant ;
-} T_Block
+} T_Block;
 
 typedef T_Block* BlockChain;
 
