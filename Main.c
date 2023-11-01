@@ -80,7 +80,7 @@ int main(int argc, char** argv)
             scanf("%s", &date_recherchee);
             T_Block *bloc_recherche = rechercherBlocParDate(blockchain, &date_recherchee);
             if (bloc_recherche != NULL) {
-                // On a trouvé le bloc correspondant à la date de recherche.
+                // On a trouvÃ© le bloc correspondant Ã  la date de recherche.
                 total_transactions = totalTransactionEtudiantBlock(idEtu, bloc_recherche);
                 printf("La somme des EATCoin credites et depenses par l'etudiant d'id %d sur la journee %s est de %f EATCoin.\n", idEtu, date_recherchee, total_transactions);
             }
@@ -102,7 +102,7 @@ int main(int argc, char** argv)
             break;
 
         case 5:
-            int idEtu, verif;
+            int idEtu, verif; //verif ne sert Ã  rien dans ce cas
             float montant;
             char descr[20];
             printf("Vous avez choisi l'option 5, qui correspond au rechargement du compte d'un etudiant. \n");
@@ -116,7 +116,7 @@ int main(int argc, char** argv)
             break;
 
         case 6:
-            int idEtu, verif = 1;
+            int idEtu, verif = 1; //je ne vois pas prq on initialise verif avec 1, ca change pas grande chose mais.....
             float montant;
             char descr[20];
 
@@ -179,7 +179,7 @@ int main(int argc, char** argv)
 
         default:
             printf("Vous avez entre un numero invalide. Recommencez!\n");
-            // Puis, on réaffiche le menu et on redemande la sélection d'une option en cas de choix invalide
+            // Puis, on rÃ©affiche le menu et on redemande la sÃ©lection d'une option en cas de choix invalide
         }
     }
 
