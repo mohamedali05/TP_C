@@ -58,14 +58,19 @@ T_Block *rechercherBlocParDate(BlockChain bc, char *dateRecherche) {
 }
 
 int estBissextile(int an) {
-    return (an % 4 == 0 && (an % 100 != 0 || ann % 400 == 0));
+    return (an % 4 == 0 && (an % 100 != 0 || an % 400 == 0));
 }
 char* date_suivante(char* date){
 
-    char date_courante[] = *date;
+    char* p_result = NULL;
+    char date_courante[9];
     char sous_chaine_an[5], sous_chaine_mois[3], sous_chaine_jour[3];
     unsigned int an, mois, jour;
     unsigned int nouv_an, nouv_mois, nouv_jour;
+
+    // Récupérer la valeur de date (string) contenue à l'adresse passée en paramètre
+    strncpy(date_courante, date, 8);
+    date_courante[8] = '\0';
 
 
     // Extraire l'an (4 premiers caractères)
@@ -85,13 +90,14 @@ char* date_suivante(char* date){
     mois = atoi(sous_chaine_mois);
     jour = atoi(sous_chaine_jour);
 
+    printf("An: %04d\nMois: %02d\nJour: %02d\n", an, mois, jour); // simple test
+
     int jours_par_mois[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
     // Vérifier si  l'année est bissextile
     if (estBissextile(an))
-    {
-        jours_par_mois[1] = 29;
-    }
+        jours_par_mois[1] = 29; // si l'année est bissextile, février a 29 jours au lieu de 28 jours
+
 
     // Vérifier si le format de date est cohérent
     if (mois >= 1 && mois <= 12 && jour >= 1 && jour <= jours_par_mois[mois - 1])
@@ -99,7 +105,7 @@ char* date_suivante(char* date){
         // Incrémenter le jour seulement
         if (jour < jours_par_mois[mois - 1])
         {
-            nouv_jour = jour++;
+            nouv_jour = jour + 1;
             nouv_mois = mois;
             nouv_an = an;
         }
@@ -107,7 +113,7 @@ char* date_suivante(char* date){
         else if (mois < 12)
         {
             nouv_jour = 1;
-            nouv_mois = mois++;
+            nouv_mois = mois + 1;
             nouv_an = an;
         }
         // Passer à l'année suivante si le jour courant est le 31 décembre
@@ -115,31 +121,16 @@ char* date_suivante(char* date){
         {
             nouv_jour = 1;
             nouv_mois = 1;
-            nouv_an = an++;
+            nouv_an = an + 1;
         }
 
-        char sous_chaine_an_suivant[5];
-        char sous_chaine_mois_suivant[3];
-        char sous_chaine_jour_suivant[3];
+        // Convertir les entiers en chaînes de caractères et concaténer le tout pour obtenir la date suivante
+        snprintf(date, 9, "%04d%02d%02d", nouv_an, nouv_mois, nouv_jour);
+        p_result = &date;
 
-        // Convertir les entiers en chaînes de caractères
-        sprintf(sous_chaine_an_suivant, "%04d", nouv_an);
-        sprintf(sous_chaine_mois_suivant, "%02d", nouv_mois);
-        sprintf(sous_chaine_jour_suivant, "%02d", nouv_jour);
-
-        // Concaténer les chaînes pour former la date suivante
-        char date_suivante[9];
-        sprintf(date_suivante, "%s%s%s", sous_chaine_an_suivant, sous_chaine_mois_suivant, sous_chaine_jour_suivant);
-
-        printf("Date suivante : %s\n", date_suivante);
-
-        return &date_suivante;
     }
     else
-    {
-        printf("Date courante invalide.\n");
-        return NULL;
-    }
+        date[0] = '\0';
 }
 
 

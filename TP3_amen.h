@@ -13,7 +13,7 @@ typedef struct Block{
     int idBlock;
     char* dateBlock; //AAAAMMJJ
     T_Transaction* listeTransactions;
-    struct Block* suivant
+    struct Block* suivant ;
 } T_Block
 
 typedef T_Block* BlockChain;
