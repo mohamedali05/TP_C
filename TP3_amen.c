@@ -222,11 +222,14 @@ void consulter(int idEtu, BlockChain bc){
 }
 
 // 8/Transfert de EATCoins entre deux étudiants:
-int transfert(int idSource, int idDestination, float montant, char *descr, char* date,BlockChain bc){
-    crediter(idDestination, montant, descr, date, bc);
-    float montant_neg = -montant;
-    crediter(idSource, montant_neg, descr, date, bc);
-    return 1; //if it works else return 0
+int transfert(int idSource, int idDestination, float montant, char *descr, char* date, BlockChain bc){
+    int test;
+    test = payer(idSource, montant, descr, date, bc);
+    if(test==0) return 0;
+    else{
+        crediter(idDestination, montant, descr, date, bc);
+        return 1;
+    }
 }
 
 // vider buffer
