@@ -23,6 +23,7 @@ T_Transaction *creerTransaction(int id, float montant, char *descr);
 T_Block *creerBloc(int id, char* date);
 
 
+
 // 1.	Ajout d'une transaction en t�te d'une liste de transactions :
 T_Transaction *ajouterTransaction(int idEtu, float montant, char *descr, T_Transaction *listeTransaction);
 
@@ -38,7 +39,7 @@ float totalTransactionEtudiantBlock(int idEtu, T_Block b);
 float soldeEtudiant(int idEtu, BlockChain bc);
 
 // 5.	Rechargement du compte d�un �tudiant :
-void crediter(int idEtu, float montant, char *descr, char* date , BlockChain bc); //TODO: rajouter dans le rapport prq on a rajouté le variable date
+ BlockChain crediter(int idEtu, float montant, char *descr, char* date , BlockChain bc); //TODO: rajouter dans le rapport prq on a rajouté le variable date
 
 // 6.	Paiement d�un repas :
 int payer(int idEtu, float montant, char *descr, char* date ,BlockChain bc);//TODO: rajouter dans le rapport prq on a rajouté le variable date
@@ -49,7 +50,20 @@ void consulter(int idEtu, BlockChain bc);
 // 8.	Transfert de EATCoins entre deux �tudiants :
 int transfert(int idSource, int idDestination, float montant, char *descr, char* date, BlockChain bc);
 
+int estBissextile(int an);
 char* date_suivante(char* date);
+
+// Fonctions d'affichage det de deboggage
+void print_Transc(T_Transaction* trans);
+void print_premier_bloc(BlockChain bc);
+void print_bloc(T_Block* bloc);
+void print_blockchain(BlockChain bc);
+
+// Fonctions de libération de la mémoire
+void libererTransaction(T_Transaction* trans);
+void libererBloc(T_Block* bloc);
+
+
 
 // UTILS
 void viderBuffer() ;
