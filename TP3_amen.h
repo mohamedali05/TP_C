@@ -1,7 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef TP_3_AMEN_H_INCLUDED
+#define TP_3_AMEN_H_INCLUDED
 
-#define MAX_descr 100
 typedef struct Transaction{
     int idEtu;
     float montant;
@@ -14,9 +13,9 @@ typedef struct Block{
     char* dateBlock; //AAAAMMJJ
     T_Transaction* listeTransactions;
     struct Block* suivant ;
-} T_Block
+} T_Block;
 
-typedef T_Block* BlockChain;
+typedef T_Block *BlockChain;
 
 // Cr�ation et initialisation des structures
 T_Transaction *creerTransaction(int id, float montant, char *descr);
@@ -25,6 +24,8 @@ T_Block *creerBloc(int id, char* date);
 
 // 1.	Ajout d'une transaction en t�te d'une liste de transactions :
 T_Transaction *ajouterTransaction(int idEtu, float montant, char *descr, T_Transaction *listeTransaction);
+
+T_Block *rechercherBlocParDate(BlockChain bc, char *dateRecherche) ;
 
 // 2.	Ajout d'un bloc en t�te de la BlockChain :
 BlockChain ajouterBlock(BlockChain bc, char* date); //TODO: rajouter dans le rapport prq on a rajouté le variable date
@@ -39,7 +40,7 @@ float soldeEtudiant(int idEtu, BlockChain bc);
 void crediter(int idEtu, float montant, char *descr, char* date , BlockChain bc); //TODO: rajouter dans le rapport prq on a rajouté le variable date
 
 // 6.	Paiement d�un repas :
-int payer(int idEtu, float montant, char *descr, char* date ,BlockChain bc);//TODO: rajouter dans le rapport prq on a rajouté le variable date
+int payer(int idEtu, float montant, char *descr, char* date, BlockChain *bc);//TODO: rajouter dans le rapport prq on a rajouté le variable date
 
 // 7.	Historique d�un �tudiant :
 void consulter(int idEtu, BlockChain bc);
@@ -47,8 +48,25 @@ void consulter(int idEtu, BlockChain bc);
 // 8.	Transfert de EATCoins entre deux �tudiants :
 int transfert(int idSource, int idDestination, float montant, char *descr, char* date, BlockChain bc);
 
+//gérer la date
+int estBissextile(int an);
 char* date_suivante(char* date);
 
-// UTILS
+// fonctions d'affichage et de deboggage
+void print_Transc(T_Transaction* trans);
+void print_premier_bloc(BlockChain bc);
+void print_bloc(T_Block* bloc);
+void print_blockchain(BlockChain bc);
+
+// Fonctions de libération de la mémoire
+void libererTransaction(T_Transaction* trans);
+void libererBloc(T_Block* bloc);
+void libererBlockchain(BlockChain bc);
 void viderBuffer() ;
+
+
+#endif // TP_3_H_INCLUDED
+
+
+
 
