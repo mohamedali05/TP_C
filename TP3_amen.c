@@ -242,7 +242,7 @@ float soldeEtudiant(int idEtu, BlockChain bc){
 }
 
 // 5/Rechargement du compte d'un étudiant:
-BlockChain crediter(int idEtu, float montant, char* descr, char* date, BlockChain bc){
+void crediter(int idEtu, float montant, char* descr, char* date, BlockChain bc){ //crediter doit retourner un void
 
     T_Block* b = bc;
     while(b != NULL){
@@ -257,7 +257,6 @@ BlockChain crediter(int idEtu, float montant, char* descr, char* date, BlockChai
     bc = ajouterBlock(bc, date);
 
     bc->listeTransactions = ajouterTransaction(idEtu, montant, descr, bc->listeTransactions);
-    return bc ;
 }
 
 // 6/Paiement d'un repas:
@@ -272,8 +271,7 @@ int payer(int idEtu, float montant, char* descr, char* date, BlockChain* bc){ //
     {
         if (montant > 0)
             montant = -montant;
-
-        (*bc) = crediter(idEtu, montant, descr, date, *bc);
+        crediter(idEtu, montant, descr, date, *bc);
         return 1; // retourne 1 si le paiement a bien ete effectue avec succes
     }
 }
