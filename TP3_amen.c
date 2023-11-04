@@ -57,12 +57,14 @@ void print_blockchain(BlockChain bc)
         return;
 
     T_Block *bloc = bc;
-    print_bloc(bloc);
+    printf("id_bloc : %d \n" , bloc->idBlock) ;
+    printf("date_bloc : %s \n" , bloc->dateBlock);;
 
     while (bloc->suivant != NULL)
     {
         bloc = bloc->suivant;
-        print_bloc(bloc);
+        printf("id_bloc : %d \n" , bloc->idBlock) ;
+        printf("date_bloc : %s \n" , bloc->dateBlock);
     }
 }
 
