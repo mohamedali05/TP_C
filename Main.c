@@ -95,7 +95,6 @@ int main()
 
             printf("La date recherchee est %s.\n", date_recherchee);
             printf("La blockchain est: \n");
-            print_blockchain(blockchain);
             T_Block *bloc_recherche = rechercherBlocParDate(blockchain, date_recherchee);
 
             if (bloc_recherche != NULL) {
@@ -129,7 +128,7 @@ int main()
             printf("\nVeuillez entrer la description correspondant au rechargement (ici considere comme une transaction): ");
             scanf("%s", descr);
             crediter(idetu, montant, descr, date_du_jour, blockchain);
-            printf("rechargement réussi");
+            printf("\nrechargement réussi");
             break;
 
         case 6:
@@ -142,10 +141,10 @@ int main()
             printf("\nVeuillez entrer la description correspondant au paiement: ");
             scanf("%s", descr);
 
-            verif = payer(idetu, montant, descr, date_du_jour, &blockchain);
+            verif = payer(idetu, montant, descr, date_du_jour, blockchain);
             if (verif == 0)
             {
-                printf("Ooops! Cet etudiant d'id %d n'a pas assez de EATCoin pour pouvoir effectuer le paiement.\n", idetu);
+                printf("\n Ooops! Cet etudiant d'id %d n'a pas assez de EATCoin pour pouvoir effectuer le paiement.\n", idetu);
                 printf("Vous devez d'abord recharger son compte, en choisissant l'option 5. Nous vous redirigeons vers le menu.\n");
                 continue;
             }
