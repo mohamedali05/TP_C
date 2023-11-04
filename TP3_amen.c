@@ -2,25 +2,12 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include "TP3_amen.h"
+#include "TP3_amen.h" 
+//TODO: À la fin du programme, les blocs de mémoire dynamiquement alloués doivent être proprement libérés.
 
+//des fonctions additionnels utiles (on va peut étre enlever quelque unes si y'a pas bcp d'utilité)
 
-//création et initialisation du bloc
-T_Block* creerBloc(int id, char* date){
-    T_Block *nouveauBloc = malloc(sizeof(T_Block));
-    if (nouveauBloc != NULL) {
-        // l'allocation mémoire s'est bien passée
-        nouveauBloc->dateBlock = malloc(strlen(date) + 1);
-        strcpy(nouveauBloc->dateBlock,date);
-        nouveauBloc->idBlock = id;
-        nouveauBloc->listeTransactions = NULL;
-        nouveauBloc->suivant = NULL;
-    }
-
-    return nouveauBloc;
-}
-
-
+//afficher les infos d'une transactions
 void print_Transc(T_Transaction* trans){
     if (trans == NULL)
         return;
@@ -38,7 +25,7 @@ void print_Transc(T_Transaction* trans){
     }
 }
 
-
+//imprimer le 1er bloc d'une blockchain
 void print_premier_bloc(BlockChain bc)
 {
     if (bc == NULL)
@@ -51,6 +38,7 @@ void print_premier_bloc(BlockChain bc)
     print_Transc(premier_bloc->listeTransactions);
 }
 
+//imprimer les infos d'un bloc donné
 void print_bloc(T_Block* bloc)
 {
     if (bloc ==  NULL)
@@ -62,44 +50,25 @@ void print_bloc(T_Block* bloc)
     print_Transc(bloc->listeTransactions);
 }
 
+//imprimer toute la blockchain
 void print_blockchain(BlockChain bc)
 {
     if (bc == NULL)
         return;
 
     T_Block *bloc = bc;
-    print_bloc(bloc);
+    printf("id_bloc : %d \n" , bloc->idBlock) ;
+    printf("date_bloc : %s \n" , bloc->dateBlock);;
 
     while (bloc->suivant != NULL)
     {
         bloc = bloc->suivant;
-        print_bloc(bloc);
+        printf("id_bloc : %d \n" , bloc->idBlock) ;
+        printf("date_bloc : %s \n" , bloc->dateBlock);
     }
 }
 
-//création et initialisation du transaction
-T_Transaction* creerTransaction(int id, float montant, char* descr) {
-    T_Transaction *nouvelleTransaction = malloc(sizeof(T_Transaction));
-    if (nouvelleTransaction != NULL) {
-        // l'allocation mémoire s'est bien passée
-        nouvelleTransaction->description = malloc(strlen(descr) + 1); // Important : malloc permet d'avoir l'espace mémoire dédié pour notre champ de structure
-        strcpy(nouvelleTransaction->description,descr);
-        nouvelleTransaction->idEtu = id;
-        nouvelleTransaction->montant = montant;
-        nouvelleTransaction->suivant = NULL;
-    }
-
-    return nouvelleTransaction;
-}
-
-// 1/ajout d'une transaction à la tete de la liste
-T_Transaction* ajouterTransaction(int idEtu, float montant, char* descr, T_Transaction* listeTransaction){
-    T_Transaction* trans = creerTransaction(idEtu, montant, descr);
-    trans->suivant = listeTransaction;
-    return trans;
-}
-
-
+//retourne la pointeur d'un bloc à partir de la date
 T_Block *rechercherBlocParDate(BlockChain bc, char *dateRecherche) {
     T_Block *currentBlock = bc;
     while (currentBlock != NULL) {
@@ -116,9 +85,11 @@ T_Block *rechercherBlocParDate(BlockChain bc, char *dateRecherche) {
     return NULL;
 }
 
+//calculer la date suivante à partir d'une date donnée
 int estBissextile(int an) {
     return (an % 4 == 0 && (an % 100 != 0 || an % 400 == 0));
 }
+
 char* date_suivante(char* date){
 
     char date_courante[9];
@@ -194,126 +165,34 @@ char* date_suivante(char* date){
     return date;
 }
 
-
-// 2/ajout d'un bloc en tete de blockchain
-//TODO: rajouter dans le rapport prq on a rajouté le variable date
-BlockChain ajouterBlock(BlockChain bc, char* date){
-    int idBlock_res;
-    //blockchain vide--> id= 0
-    if(bc == NULL)idBlock_res = 0;
-    //blockchain non vide-->id= bc->idBlock +1 , date
-    else idBlock_res = bc->idBlock + 1;
-    T_Block* res = creerBloc(idBlock_res, date);
-    //on relie le nouveau block créé au reste de la chaine(suivant=NULL si block vide, sinon, suivant= ancienne tete de la chaine)
-    res->suivant = bc;
-    return res;
-}
-
-// 3/Calcul de la somme des EATCoin crédités et dépenses par un étudiant sur une journée:
-float totalTransactionEtudiantBlock(int idEtu, T_Block b){
-
-    //faut-il pas séparer le montant dépensé et le montant crédité?????
-    // je pense qu'il suffit de donner la somme mais on peut, ken thib Amen (tests sur le signe de trans->montant)
-
-    float coin = 0.0;
-    T_Transaction* trans = b.listeTransactions; // on accède au bloc et pas à son pointeur pour récupérer la liste des transaction (voir type T_Block)
-
-    while (trans != NULL) {
-        if (trans->idEtu == idEtu) {
-            coin += trans->montant;
-        }
-        trans = trans->suivant; // trans->suivant marche pour moi
+//création et initialisation du bloc
+T_Block* creerBloc(int id, char* date){
+    T_Block *nouveauBloc = malloc(sizeof(T_Block));
+    if (nouveauBloc != NULL) {
+        // l'allocation mémoire s'est bien passée
+        nouveauBloc->dateBlock = malloc(strlen(date) + 1);
+        strcpy(nouveauBloc->dateBlock,date);
+        nouveauBloc->idBlock = id;
+        nouveauBloc->listeTransactions = NULL;
+        nouveauBloc->suivant = NULL;
     }
 
-    return coin;
+    return nouveauBloc;
 }
 
-// 4/Calcul du solde total d'un étudiant:
-float soldeEtudiant(int idEtu, BlockChain bc){
-    float res = 0.0;
-    T_Block* bloc = bc; // on initialise le bloc avec la tête de la blockchain (qui est un pointeur)
-
-    while (bloc != NULL) {
-        res += totalTransactionEtudiantBlock(idEtu, *bloc);
-        bloc = bloc->suivant; // on passe au bloc suivant
+//création et initialisation du transaction
+T_Transaction* creerTransaction(int id, float montant, char* descr) {
+    T_Transaction *nouvelleTransaction = malloc(sizeof(T_Transaction));
+    if (nouvelleTransaction != NULL) {
+        // l'allocation mémoire s'est bien passée
+        nouvelleTransaction->description = malloc(strlen(descr) + 1); // Important : malloc permet d'avoir l'espace mémoire dédié pour notre champ de structure
+        strcpy(nouvelleTransaction->description,descr);
+        nouvelleTransaction->idEtu = id;
+        nouvelleTransaction->montant = montant;
+        nouvelleTransaction->suivant = NULL;
     }
 
-    return res;
-}
-
-// 5/Rechargement du compte d'un étudiant:
-void crediter(int idEtu, float montant, char* descr, char* date, BlockChain bc){ //crediter doit retourner un void
-
-    T_Block* b = bc;
-    while(b != NULL){
-        //si un bloc avec cette date existe déjà, on rajoute la transaction à la liste de ce block
-        if(strcmp(b->dateBlock, date) == 0){
-            b->listeTransactions = ajouterTransaction(idEtu, montant, descr, b->listeTransactions);
-            return ; // sortir de la fonction après avoir ajouté la transaction
-        }
-        else b = b->suivant;
-    }
-    // si un bloc avec cette date n'existe pas, on crée un nouveau un bloc, on le lie à la blockchain et on ajoute la transaction à la liste de transactions de ce bloc
-    bc = ajouterBlock(bc, date);
-
-    bc->listeTransactions = ajouterTransaction(idEtu, montant, descr, bc->listeTransactions);
-}
-
-// 6/Paiement d'un repas:
-int payer(int idEtu, float montant, char* descr, char* date, BlockChain* bc){ //same thing, faut expliquer prq on a choisi de rajouter el variable date
-    //le montant est-il négatif ou positif?
-    if (montant < 0) // si l'utilisateur a saisi une valeur négative, on change le signe
-        montant = -montant;
-    float solde = soldeEtudiant(idEtu, *bc);
-    if (solde < montant) // si l'etudiant n'a pas assez d'EATCoin pour payer
-        return 0;
-    else
-    {
-        if (montant > 0)
-            montant = -montant;
-        crediter(idEtu, montant, descr, date, *bc);
-        return 1; // retourne 1 si le paiement a bien ete effectue avec succes
-    }
-}
-
-// 7/Historique d'un étudiant:
-void consulter(int idEtu, BlockChain bc){
-    float solde = soldeEtudiant(idEtu, bc);
-    printf("Le solde de l'etudiant est: %f\n", solde);
-    printf("L'historique de l'etudiant:\n");
-    int var = 0; // variable qui sera condition de fin de boucle quand c égal à 5
-    T_Block* bloc = bc;
-
-    while (bloc != NULL && var < 5) {
-        T_Transaction* trans = bloc->listeTransactions;
-        while (trans != NULL && var < 5) {
-            if (trans->idEtu == idEtu) {
-                var += 1;
-                printf("\n\nTransaction numero %d\n", var);
-                printf("Date: %s\n", bloc->dateBlock);
-                printf("Description: %s\n", trans->description);
-                printf("Montant: %f\n", trans->montant);
-            }
-            trans = trans->suivant;
-        }
-        bloc = bloc->suivant;
-    }
-
-    printf("Fin d'historique!\n");
-}
-
-// 8/Transfert de EATCoins entre deux étudiants:
-int transfert(int idSource, int idDestination, float montant, char *descr, char* date,BlockChain bc){
-    float solde_etudiantSource = soldeEtudiant(idSource, bc);
-    if (solde_etudiantSource < montant)
-        return 0;
-    else
-    {
-        bc = crediter(idDestination, montant, descr, date, bc);
-        float montant_neg = -montant;
-        bc = crediter(idSource, montant_neg, descr, date, bc);
-        return 1;
-    }
+    return nouvelleTransaction;
 }
 
 // vider buffer
@@ -324,6 +203,7 @@ void viderBuffer() {
     }
 }
 
+//libération de la mémore d'une transaction
 void libererTransaction(T_Transaction* trans) {
     if (trans == NULL)
         return;
@@ -336,6 +216,7 @@ void libererTransaction(T_Transaction* trans) {
     free(trans);
 }
 
+//libération de la mémore d'un bloc 
 void libererBloc(T_Block* bloc) {
     if (bloc == NULL)
         return;
@@ -356,7 +237,8 @@ void libererBloc(T_Block* bloc) {
     free(bloc);
 }
 
-void libererBlockchain (BlockChain bc)
+//libération de la mémoire de la blockchain
+void libererBlockchain(BlockChain bc)
 {
     if (bc == NULL)
         return;
@@ -367,3 +249,126 @@ void libererBlockchain (BlockChain bc)
         bloc = bloc->suivant;
     }
 }
+
+//fonctions demandées par le sujet
+
+
+// 1/ajout d'une transaction à la tete de la liste
+T_Transaction* ajouterTransaction(int idEtu, float montant, char* descr, T_Transaction* listeTransaction){
+    T_Transaction* trans = creerTransaction(idEtu, montant, descr);
+    trans->suivant = listeTransaction;
+    return trans;
+}
+
+// 2/ajout d'un bloc en tete de blockchain 
+//TODO: rajouter dans le rapport prq on a rajouté le variable date
+BlockChain ajouterBlock(BlockChain bc, char* date){
+    int idBlock_res; 
+    //blockchain vide--> id= 0
+    if(bc == NULL)idBlock_res = 0;
+    //blockchain non vide-->id= bc->idBlock +1 , date 
+    else idBlock_res = bc->idBlock + 1;
+    T_Block* res = creerBloc(idBlock_res, date);
+    //on relie le nouveau block créé au reste de la chaine(suivant=NULL si block vide, sinon, suivant= ancienne tete de la chaine)
+    res->suivant = bc;
+    return res;
+}
+
+// 3/Calcul de la somme des EATCoin crédités et dépenses par un étudiant sur une journée:
+float totalTransactionEtudiantBlock(int idEtu, T_Block b){
+    float coin=0.0;
+    T_Transaction* trans = b.listeTransactions;
+
+    while (trans != NULL) {
+        if (trans->idEtu == idEtu) coin += trans->montant;
+        trans = trans->suivant;
+    }
+
+    return coin;
+}
+
+// 4/Calcul du solde total d'un étudiant:
+float soldeEtudiant(int idEtu, BlockChain bc){
+    float res = 0.0;
+    T_Block* bloc = bc; // Le bloc est initialisé avec la tête de la blockchain
+
+    while (bloc != NULL) {
+        res += totalTransactionEtudiantBlock(idEtu, *bloc);
+        bloc = bloc->suivant;
+    }
+
+    return res;
+}
+
+// 5/Rechargement du compte d'un étudiant:
+void crediter(int idEtu, float montant, char* descr, char* date ,BlockChain bc){
+    T_Block* b = bc;
+    while(b != NULL){
+        //si un bloc avec cette date existe déjà, on rajoute la transaction à la liste de ce block
+        if(strcmp(b->dateBlock, date) == 0){
+            b->listeTransactions = ajouterTransaction(idEtu, montant, descr, b->listeTransactions);
+            return; // Sortir de la fonction après avoir ajouté la transaction
+        }
+        else b = b->suivant;
+    }
+    // si un bloc avec cette date n'existe pas, on crée un nouveau un bloc, on le lie à la blockchain et on ajoute la transaction à la liste de transactions de ce bloc
+    bc = ajouterBlock(bc, date);
+    bc->listeTransactions = ajouterTransaction(idEtu, montant, descr, bc->listeTransactions);
+    return;
+
+}
+
+// 6/Paiement d'un repas:
+int payer(int idEtu, float montant, char* descr, char* date ,BlockChain bc){ //same thing, faut expliquer prq on a choisi de rajouter el variable date
+    if (montant < 0) // si l'utilisateur a saisi une valeur négative, on change le signe pour pouvoir comparer avec le solde de l'etudiant
+        montant = -montant;
+    float solde = soldeEtudiant(idEtu, bc);
+    if (solde < montant) // si l'etudiant n'a pas assez d'EATCoin pour payer
+        return 0;
+    else
+    {
+        if (montant > 0) //on change en valeur négatif
+            montant = -montant;
+        crediter(idEtu, montant, descr, date, bc);
+        return 1; // retourne 1 si le paiement a bien ete effectue avec succes
+    }
+}
+
+// 7/Historique d'un étudiant:
+void consulter(int idEtu, BlockChain bc){
+    float solde = soldeEtudiant(idEtu, bc);
+    printf("le solde de l'étudiant est: %f \n", solde);
+    printf("l'historique de l'étudiant:\n");
+    int var=0; //variable qui sera condition de fin de boucle quand c égal à 5
+    T_Block* bloc = bc;
+
+    while (bloc != NULL && var < 5) {  //on parcourt les différents blocs à partir du dernier (soit le plus récent)
+        T_Transaction* trans = bloc->listeTransactions;
+        while (trans != NULL && var < 5)
+        {
+            if (trans->idEtu == idEtu) { //on parcourt les différents transactions associées à ce bloc à partir du dernier(soit le plus récent)
+                var += 1;
+                printf("\n\nTransaction numero %d\n", var);
+                printf("Date: %s\n", bloc->dateBlock);
+                printf("Description: %s\n", trans->description);
+                printf("Montant: %f\n", trans->montant);
+            }
+            trans = trans->suivant;
+        }
+        bloc = bloc->suivant;
+    }
+    printf("Fin d'historique!\n");
+}
+
+// 8/Transfert de EATCoins entre deux étudiants:
+int transfert(int idSource, int idDestination, float montant, char *descr, char* date, BlockChain bc){
+    int test;
+    test = payer(idSource, montant, descr, date, bc);
+    if(test==0) return 0;
+    else{
+        crediter(idDestination, montant, descr, date, bc);
+        return 1;
+    }
+}
+
+
